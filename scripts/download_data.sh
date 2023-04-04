@@ -20,24 +20,25 @@ done
 
 # download a different interesting data set!
 
-mkdir -p $data/grimm
+mkdir -p $data/poetry
 
-mkdir -p $data/grimm/raw
+mkdir -p $data/poetry/raw
 
-wget https://www.gutenberg.org/files/52521/52521-0.txt
-mv 52521-0.txt $data/grimm/raw/tales.txt
+# wget https://www.gutenberg.org/files/52521/52521-0.txt
+wget https://www.gutenberg.org/files/20158/20158-0.txt # I want poetry! this includes a little French though, and a lot of numbers
+mv 20158-0.txt $data/poetry/raw/byron.txt
 
 # preprocess slightly
 
-cat $data/grimm/raw/tales.txt | python $base/scripts/preprocess_raw.py > $data/grimm/raw/tales.cleaned.txt
+cat $data/poetry/raw/byron.txt | python $base/scripts/preprocess_raw.py > $data/poetry/raw/byron.cleaned.txt
 
-# tokenize, fix vocabulary upper bound
+# tokenize, fix vocabulary upper bound - my data is about twice the sice, so we double the original vocab size
 
-cat $data/grimm/raw/tales.cleaned.txt | python $base/scripts/preprocess.py --vocab-size 5000 --tokenize --lang "en" --sent-tokenize > \
-    $data/grimm/raw/tales.preprocessed.txt
+cat $data/poetry/raw/byron.cleaned.txt | python $base/scripts/preprocess.py --vocab-size 10000 --tokenize --lang "en" --sent-tokenize > \
+    $data/poetry/raw/byron.preprocessed.txt
 
 # split into train, valid and test
 
-head -n 440 $data/grimm/raw/tales.preprocessed.txt | tail -n 400 > $data/grimm/valid.txt
-head -n 840 $data/grimm/raw/tales.preprocessed.txt | tail -n 400 > $data/grimm/test.txt
-tail -n 3075 $data/grimm/raw/tales.preprocessed.txt | head -n 2955 > $data/grimm/train.txt
+head -n 880 $data/poetry/raw/byron.preprocessed.txt | tail -n 800 > $data/poetry/valid.txt
+head -n 1680 $data/poetry/raw/byron.preprocessed.txt | tail -n 800 > $data/poetry/test.txt
+tail -n 6150 $data/poetry/raw/byron.preprocessed.txt | head -n 5910 > $data/poetry/train.txt
