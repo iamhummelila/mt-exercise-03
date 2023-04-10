@@ -34,11 +34,11 @@ cat $data/poetry/raw/byron.txt | python $base/scripts/preprocess_raw.py > $data/
 
 # tokenize, fix vocabulary upper bound - my data is about twice the sice, so we double the original vocab size
 
-cat $data/poetry/raw/byron.cleaned.txt | python $base/scripts/preprocess.py --vocab-size 10000 --tokenize --lang "en" --sent-tokenize > \
+cat $data/poetry/raw/byron.cleaned.txt | python $base/scripts/preprocess.py --vocab-size 50000 --tokenize --lang "en" --sent-tokenize > \
     $data/poetry/raw/byron.preprocessed.txt
 
 # split into train, valid and test
 
-head -n 880 $data/poetry/raw/byron.preprocessed.txt | tail -n 800 > $data/poetry/valid.txt
-head -n 1680 $data/poetry/raw/byron.preprocessed.txt | tail -n 800 > $data/poetry/test.txt
-tail -n 6150 $data/poetry/raw/byron.preprocessed.txt | head -n 5910 > $data/poetry/train.txt
+head -n 440 $data/poetry/raw/byron.preprocessed.txt | tail -n 400 > $data/poetry/valid.txt
+head -n 840 $data/poetry/raw/byron.preprocessed.txt | tail -n 400 > $data/poetry/test.txt
+tail -n 3075 $data/poetry/raw/byron.preprocessed.txt | head -n 2955 > $data/poetry/train.txt
