@@ -25,14 +25,14 @@ mkdir -p $data/poetry
 mkdir -p $data/poetry/raw
 
 # wget https://www.gutenberg.org/files/52521/52521-0.txt
-wget https://www.gutenberg.org/files/20158/20158-0.txt # I want poetry! this includes a little French though, and a lot of numbers
+wget https://www.gutenberg.org/files/20158/20158-0.txt # I want poetry! this includes a little codeswitching and a good amount of numbers tho
 mv 20158-0.txt $data/poetry/raw/byron.txt
 
 # preprocess slightly
 
 cat $data/poetry/raw/byron.txt | python $base/scripts/preprocess_raw.py > $data/poetry/raw/byron.cleaned.txt
 
-# tokenize, fix vocabulary upper bound - my data is about twice the sice, so we double the original vocab size
+# tokenize, fix vocabulary upper bound
 
 cat $data/poetry/raw/byron.cleaned.txt | python $base/scripts/preprocess.py --vocab-size 50000 --tokenize --lang "en" --sent-tokenize > \
     $data/poetry/raw/byron.preprocessed.txt

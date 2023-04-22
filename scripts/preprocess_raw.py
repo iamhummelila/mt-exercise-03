@@ -5,5 +5,6 @@ for line in sys.stdin:
         continue
     else:
         line = line.replace(u'\ufeff', '')
+        line = line.replace('_', '')
         line = " ".join(line.split())
         sys.stdout.write(line + "\n")
