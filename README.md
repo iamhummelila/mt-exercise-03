@@ -59,3 +59,18 @@ samples/sample
 Here, we added a sample. At first, there was a sample when we had not yet removed the underscores (which were primarily used for formatting reasons). This, we called the old_sample. The new sample contains generated text based on a language model that has never seen any underscores, since we removed all of them in a preprocessing step.
 
 There was not a lot to change to get a functioning language model. A big thank you to both Moritz and Emma for their amazing code, and their making available of the code.
+
+## TODO: on task 2
+
+If you change your pytorch main.py file as we did in our copy, (note: you will have to use your local file by clicking through the path # TODO write path), then you can create a file perplexities.txt in which you can save the perplexities in relation to epoch and dropout that you use.
+
+It is currently not possible to save a perplexities model if you interrupt via keyboard during training. This may be improved in the future.
+
+If you wish to pretty print the perplexities that we created, you may want to use our module 'tabulate' that we import specifically in file TODO. Alternatively, you may adapt the code to be able to use numpy instead, if you wish to create line plots etc.
+
+To use the module 'tabulate', type the following into your command line:
+
+`pip install tabulate`
+
+Or follow the instructions under the following link: 
+https://pypi.org/project/tabulate/
