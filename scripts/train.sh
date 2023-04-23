@@ -18,12 +18,12 @@ SECONDS=0
     CUDA_VISIBLE_DEVICES=$device OMP_NUM_THREADS=$num_threads python main.py --data $data/poetry \
         --epochs 40 \
         --log-interval 100 \
-        --emsize 200 --nhid 200 --dropout 0.5 --tied \ 
+        --emsize 200 --nhid 200 --dropout 0.3 --tied \
+        --save $models/model.pt
         # TODO: change the dropout once the validation stuff works
         # choose values between 200 and 300 for embed and hidden,
         # and something else for the dropout
         # including no dropout for once! not sure if we gotta do 0 then
-        --save $models/model.pt
 )
 
 echo "time taken:"

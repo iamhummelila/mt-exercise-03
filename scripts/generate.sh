@@ -18,5 +18,5 @@ device=""
         --data $data/poetry \
         --words 100 \
         --checkpoint $models/model.pt \
-        --outf $samples/sample
+        --outf $samples/new_sample
 )
