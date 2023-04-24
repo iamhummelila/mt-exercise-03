@@ -82,3 +82,5 @@ Else, you will not get the dropout files.
 ## Bugs 
 
 Unfortunately, the training perplexity table is currently not operating correctly. 
+
+Additionally, the plotting_ppls files both do not work. This might be fixed in a future update.
