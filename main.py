@@ -10,8 +10,6 @@ import torch.onnx
 import data
 import model
 
-from tabulate import tabulate
-
 parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 RNN/LSTM/GRU/Transformer Language Model')
 parser.add_argument('--data', type=str, default='./data/wikitext-2',
                     help='location of the data corpus')
@@ -53,7 +51,9 @@ parser.add_argument('--nhead', type=int, default=2,
                     help='the number of heads in the encoder/decoder of the transformer model')
 parser.add_argument('--dry-run', action='store_true',
                     help='verify the code and the model')
-parser.add_argument('--perplexities', type=str, default="perplexities.txt", help="path to log file with saved perplexities during training")
+parser.add_argument('--ppltraining', type=str, default="perplexities-training.txt", help="path to log file with saved perplexities during training")
+parser.add_argument('--pplvalidation', type=str, default="perplexities-validation.txt", help="path to log file with saved perplexities during validation")
+
 args = parser.parse_args()
 
 # Set the random seed manually for reproducibility.
@@ -175,7 +175,29 @@ def train():
     ntokens = len(corpus.dictionary)
     if args.model != 'Transformer':
         hidden = model.init_hidden(args.batch_size)
+
+    # checking if the perplexity-file already exists, and if not, create it
+    new=True
+    if os.path.exists(args.ppltraining):
+        new = False
+        # print("Old perplexity file" + args.ppltraining)
+        with open(args.ppltraining, "r") as file:
+            lines = file.readlines()
+            t_table = list()
+        t_table = [line.strip().split() for line in lines]
+        t_table[0].append("Dropout:" + str(args.dropout))
+
+    else:
+        # print("New perplexity file")
+        new = True
+        file = open(args.ppltraining, "x", encoding="utf-8")
+        file.close()
+        t_table = [["Training_perplexity"]]
+        t_table[0].append("Dropout:" + str(args.dropout))
+    
     for batch, i in enumerate(range(0, train_data.size(0) - 1, args.bptt)):
+        if new:
+            t_table.append(["Batch" + str(i)])
         data, targets = get_batch(train_data, i)
         # Starting each batch, we detach the hidden state from how it was previously produced.
         # If we didn't, the model would try backpropagating all the way to start of the dataset.
@@ -205,8 +227,18 @@ def train():
                 elapsed * 1000 / args.log_interval, cur_loss, math.exp(cur_loss)))
             total_loss = 0
             start_time = time.time()
+            try:
+                t_table[i].append(str(math.exp(cur_loss))) # the perplexity!
+            except IndexError:
+                t_table.append(["Batch" + str(i)])
+                t_table[i].append(str(math.exp(cur_loss))) # perplexity
         if args.dry_run:
             break
+        with open(args.ppltraining, "w", encoding="utf-8") as file:
+            for sublist in t_table:
+                line = '\t'.join(sublist) + '\n'
+                file.write(line)
+
 
 
 def export_onnx(path, batch_size, seq_len):
@@ -223,35 +255,32 @@ best_val_loss = None
 new = True
 
 # checking if the perplexity-file already exists, and if not, create it
-if os.path.exists(args.perplexities):
+if os.path.exists(args.pplvalidation):
     new = False
-    print("Old perplexity file" + args.perplexities)
-    with open(args.perplexities, "r") as file:
+    print("Old perplexity file" + args.pplvalidation)
+    with open(args.pplvalidation, "r") as file:
         lines = file.readlines()
-        table = list()
-        # for i, line in enumerate(file):
-          #  table.append(file.readline().split("\n")) # potentially strip " "
-    table = [line.strip().split() for line in lines]
-    table[0].append("Dropout: " + str(args.dropout))
-    print(table)
+        v_table = list()
+    v_table = [line.strip().split() for line in lines]
+    v_table[0].append("Dropout:" + str(args.dropout))
 
 else:
     # print("New perplexity file")
     new = True
-    file = open(args.perplexities, "x", encoding="utf-8")
+    file = open(args.pplvalidation, "x", encoding="utf-8")
     file.close()
-    table = [["Valid._perplexity"]]
-    # print(table)
-    table[0].append("Dropout:" + str(args.dropout))
-    # print(table)
+    v_table = [["Valid._perplexity"]]
+    # print(t_table)
+    v_table[0].append("Dropout:" + str(args.dropout))
+    # print(t_table)
 
 
 # At any point you can hit Ctrl + C to break out of training early.
 try:
     for epoch in range(1, args.epochs+1):
         if new:
-            table.append(["Epoch" + str(epoch)])
-        # print(table)
+            v_table.append(["Epoch" + str(epoch)])
+        # print(t_table)
         epoch_start_time = time.time()
         train()
         val_loss = evaluate(val_data)
@@ -269,21 +298,14 @@ try:
             # Anneal the learning rate if no improvement has been seen in the validation dataset.
             lr /= 4.0
         try:
-            table[epoch].append(str(val_loss))
+            v_table[epoch].append(str(math.exp(val_loss))) # the perplexity!
         except IndexError:
-            print(table)
-            print(len(table))
-            table.append(["Epoch" + str(epoch)])
-            table[epoch].append(str(val_loss))
+            v_table.append(["Epoch" + str(epoch)])
+            v_table[epoch].append(str(math.exp(val_loss))) # perplexity
 
 except KeyboardInterrupt:
     print('-' * 89)
     print('Exiting from training early')
-
-with open(args.perplexities, "w", encoding="utf-8") as file:
-    for sublist in table:
-        line = '\t'.join(sublist) + '\n'
-        file.write(line)
 
 # Load the best saved model.
 with open(args.save, 'rb') as f:
@@ -301,6 +323,16 @@ print('| End of training | test loss {:5.2f} | test ppl {:8.2f}'.format(
     test_loss, math.exp(test_loss)))
 print('=' * 89)
 
+if new:
+    v_table.append(["test_ppl:", str(math.exp(test_loss))])
+else:
+    v_table[-1].append(str(math.exp(test_loss)))
+
 if len(args.onnx_export) > 0:
     # Export the model in ONNX format.
     export_onnx(args.onnx_export, batch_size=1, seq_len=args.bptt)
+
+with open(args.pplvalidation, "w", encoding="utf-8") as file:
+    for sublist in v_table:
+        line = '\t'.join(sublist) + '\n'
+        file.write(line)
