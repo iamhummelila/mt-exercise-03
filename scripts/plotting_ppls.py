@@ -10,3 +10,7 @@ file_table = [line.strip().split() for line in lines]
 
 table = pd.Series(file_table)
 print(table)
+table.plot()
+
+# TODO: potentially put this in a jupyter notebook?
+
