@@ -60,17 +60,25 @@ Here, we added a sample. At first, there was a sample when we had not yet remove
 
 There was not a lot to change to get a functioning language model. A big thank you to both Moritz and Emma for their amazing code, and their making available of the code.
 
-## TODO: on task 2
+## TODO: On aspects of dropout and perplexities
 
-If you change your pytorch main.py file as we did in our copy, (note: you will have to use your local file by clicking through the path # TODO write path), then you can create a file perplexities.txt in which you can save the perplexities in relation to epoch and dropout that you use.
+If you change your pytorch main.py file as we did in our copy, (note: you will have to use your local file by clicking through the path # TODO write path), then you can create two files, pplvalidation.txt and ppltraining.txt in which you can save the perplexities in relation to epoch and dropout that you use, for both the training and the validation step separately. You may also use plotting_ppls.py (where you might need to modify the path or put the files into the correct folder) to create a pandas series out of those two tables, which you can later use to analyse or draw lineplots.
 
 It is currently not possible to save a perplexities model if you interrupt via keyboard during training. This may be improved in the future.
 
-If you wish to pretty print the perplexities that we created, you may want to use our module 'tabulate' that we import specifically in file TODO. Alternatively, you may adapt the code to be able to use numpy instead, if you wish to create line plots etc.
+Additionally to the previous repo, we are also using pandas. This will be installed with the install_packages.sh script.
 
-To use the module 'tabulate', type the following into your command line:
+Alternatively, to use the module 'pandas', type the following into your command line:
 
-`pip install tabulate`
+`pip install pandas`
 
-Or follow the instructions under the following link: 
-https://pypi.org/project/tabulate/
+The current train.sh script contains multiple models that only use varying dropouts. You may remove or add any number you wish. Additionally, the generate.sh file contains multiple models as well, for which it will produce a separate sample. Those samples can be considered if the wish to compare samples is present.
+
+### IMPORTANT!
+When forking this repo, you will have to put up additional effort for the dropout and the perplexity steps. You will have to copy paste our code in main.py into tools/pytorch-examples/word_language_model/main.py 
+
+Else, you will not get the dropout files.
+
+## Bugs 
+
+Unfortunately, the training perplexity table is currently not operating correctly. 
