@@ -62,15 +62,11 @@ There was not a lot to change to get a functioning language model. A big thank y
 
 ## TODO: On aspects of dropout and perplexities
 
-If you change your pytorch main.py file as we did in our copy, (note: you will have to use your local file by clicking through the path # TODO write path), then you can create two files, pplvalidation.txt and ppltraining.txt in which you can save the perplexities in relation to epoch and dropout that you use, for both the training and the validation step separately. You may also use plotting_ppls.py (where you might need to modify the path or put the files into the correct folder) to create a pandas series out of those two tables, which you can later use to analyse or draw lineplots.
+If you change your pytorch main.py file as we did in our copy, (note: you will have to use your local file by clicking through the path tools/pytorch-examples/word_language_model/main.py), then you can create two files, pplvalidation.txt and ppltraining.txt in which you can save the perplexities in relation to epoch and dropout that you use, for both the training and the validation step separately. You may also use plotting_ppls.ipynb (where you might need to modify the path or put the files into the correct folder) to create a pandas dataframe out of those two tables, which you can later use to analyse or draw lineplots. see below for more info.
 
 It is currently not possible to save a perplexities model if you interrupt via keyboard during training. This may be improved in the future.
 
-Additionally to the previous repo, we are also using pandas. This will be installed with the install_packages.sh script.
-
-Alternatively, to use the module 'pandas', type the following into your command line:
-
-`pip install pandas`
+Additionally to the previous repo, we are also using pandas and seaborn. This will be installed with the install_packages.sh script.
 
 The current train.sh script contains multiple models that only use varying dropouts. You may remove or add any number you wish. Additionally, the generate.sh file contains multiple models as well, for which it will produce a separate sample. Those samples can be considered if the wish to compare samples is present.
 
@@ -83,4 +79,4 @@ Else, you will not get the dropout files.
 
 Unfortunately, the training perplexity table is currently not operating correctly. 
 
-Additionally, the plotting_ppls files both do not work. This might be fixed in a future update.
+Additionally, the plotting_ppls.ipynb does not work. This might be fixed in a future update. It correctly created the DataFrame, but there is an issue with the seaborn module.
